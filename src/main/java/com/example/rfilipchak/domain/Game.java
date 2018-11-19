@@ -1,22 +1,20 @@
 package com.example.rfilipchak.domain;
 
-import java.util.HashSet;
-import java.util.Set;
+import lombok.Data;
 
+import java.util.HashMap;
+import java.util.Map;
+
+@Data
 public class Game {
 
-    private DataCenter dataCenter;
+    private Map<String, DataCenter> gamesDataCentres = new HashMap<>();
 
-    private Set<DataCenter> dataCenters = new HashSet<>();
-
-    public Game(DataCenter dataCenters) {
-        this.dataCenter = dataCenter;
+    public void addDataCenter(DataCenter dataCenter) {
+        gamesDataCentres.put(dataCenter.getDatacenterName(), dataCenter);
     }
 
-    public void addDataCenter(DataCenter dataCenter){
-        dataCenters.add(dataCenter);
-    }
-    public DataCenter getDataCenter(DataCenter dataCenter){
-        return dataCenters.stream().filter(dataCenter::equals).findAny().orElse(null);
+    public Map<String, DataCenter> getDataCentres() {
+        return gamesDataCentres;
     }
 }

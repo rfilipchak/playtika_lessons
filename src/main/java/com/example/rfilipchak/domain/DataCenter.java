@@ -1,8 +1,8 @@
 package com.example.rfilipchak.domain;
 
-import lombok.AllArgsConstructor;
+import lombok.Value;
 
-@AllArgsConstructor
+@Value
 public class DataCenter {
     private String datacenterName;
     private City city;

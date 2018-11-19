@@ -1,42 +1,38 @@
 package com.example.rfilipchak.gameservice;
 
 import com.example.rfilipchak.domain.*;
+import lombok.NoArgsConstructor;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+@NoArgsConstructor
 public class GameServiceImpl implements GameService {
 
-    Set<Region> regions = new HashSet<>();
     Set<City> cities = new HashSet<>();
-    Set<DataCenter> dataCenters = new HashSet<>();
-    Map<String,GameUser> gameUsers = new HashMap<>();
-
-
-    Region vinnickiy = new Region("Vinnickiy");
-    Region kievskiy = new Region("Kievskiy");
-
-    City kiev = new City(kievskiy, "Kiev");
-    City vinnica = new City(vinnickiy, "Vinnica");
-
-
-    DataCenter dataCenter1 = new DataCenter("dataCentre1", kiev);
-    DataCenter dataCenter2 = new DataCenter("dataCentre2", vinnica);
-
+    Map<String, GameUser> gameUsers = new HashMap<>();
 
     @Override
     public GameUser addNewUser(String userName, String region, City city) {
-
-            GameUser newUser = new GameUser(userName, new Address(cityToContains(city)));
-            gameUsers.put(newUser.getName(), newUser);
-            return newUser;
+        GameUser newUser = new GameUser(userName, new Address(cityToContains(city)));
+        gameUsers.put(newUser.getName(), newUser);
+        return newUser;
     }
 
     @Override
-    public String getUserDataCentre(GameUser gameUser) {
-        return null;
+    public String getUserDataCentre(GameUser gameUser, Game game) {
+
+        for (DataCenter dataCenter : game.getDataCentres().values()) {
+            if (gameUser.getAddress().getCity().equals(dataCenter.getCity())) {
+
+                return String.format("User %s play in datacenter %s",
+                                     gameUser.getName(),
+                                     game.getDataCentres().get(dataCenter.getDatacenterName()).getDatacenterName());
+            }
+        }
+        return "User don't play game";
     }
 
     private City cityToContains(City city) {
