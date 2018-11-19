@@ -9,4 +9,5 @@ public class RfilipchakApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(RfilipchakApplication.class, args);
 	}
+
 }
