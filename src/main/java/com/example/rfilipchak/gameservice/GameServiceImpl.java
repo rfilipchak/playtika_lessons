@@ -26,19 +26,20 @@ public class GameServiceImpl implements GameService {
     @Override
     public String getUserDataCentre(GameUser gameUser, Game game) {
 
-        Map<Address, String> addressToDatacenterName = game.getDataCenters()
-                                                           .stream()
-                                                           .flatMap(dc -> dc.getRegions()
-                                                                            .stream()
-                                                                            .flatMap(region1 -> region1.getCitySet()
-                                                                                                       .stream()
-                                                                                                       .flatMap(
-                                                                                                               city1 -> city1.getAddresses()
-                                                                                                                             .stream()
-                                                                                                                             .map(address -> new Pair<>(
-                                                                                                                                     address,
-                                                                                                                                     dc.getDatacenterName())))))
-                                                           .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
+        Map<Address, String> addressToDatacenterName =
+                game.getDataCenters()
+                    .stream()
+                    .flatMap(dc -> dc.getRegions()
+                                     .stream()
+                                     .flatMap(region1 -> region1.getCitySet()
+                                                                .stream()
+                                                                .flatMap(
+                                                                        city1 -> city1.getAddresses()
+                                                                                      .stream()
+                                                                                      .map(address -> new Pair<>(
+                                                                                              address,
+                                                                                              dc.getDatacenterName())))))
+                    .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
 
         for (Address a : addressToDatacenterName.keySet()) {
             if (gameUser.getAddress().equals(a)) {
