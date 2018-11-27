@@ -4,6 +4,5 @@ import lombok.Value;
 
 @Value
 public class Address {
-
-    private City city;
+    private final String address;
 }

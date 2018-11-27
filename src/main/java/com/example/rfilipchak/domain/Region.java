@@ -1,8 +1,12 @@
 package com.example.rfilipchak.domain;
 
-import lombok.AllArgsConstructor;
+import lombok.Value;
 
-@AllArgsConstructor
+import java.util.Set;
+
+@Value
+
 public class Region {
     private String regionName;
+    private Set<City> citySet;
 }

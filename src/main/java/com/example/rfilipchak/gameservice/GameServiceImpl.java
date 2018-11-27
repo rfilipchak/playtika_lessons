@@ -1,46 +1,58 @@
 package com.example.rfilipchak.gameservice;
 
-import com.example.rfilipchak.domain.*;
+import com.example.rfilipchak.domain.Address;
+import com.example.rfilipchak.domain.Game;
+import com.example.rfilipchak.domain.GameUser;
 import lombok.NoArgsConstructor;
+import lombok.Value;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor
 public class GameServiceImpl implements GameService {
 
-    Set<City> cities = new HashSet<>();
-    Map<String, GameUser> gameUsers = new HashMap<>();
+    Set<GameUser> gameUsers = new HashSet<>();
 
     @Override
-    public GameUser addNewUser(String userName, String region, City city) {
-        GameUser newUser = new GameUser(userName, new Address(cityToContains(city)));
-        gameUsers.put(newUser.getName(), newUser);
+    public GameUser addNewUser(String userName, Address address) {
+        GameUser newUser = new GameUser(userName, address);
+        gameUsers.add(newUser);
         return newUser;
     }
 
     @Override
     public String getUserDataCentre(GameUser gameUser, Game game) {
 
-        for (DataCenter dataCenter : game.getDataCentres().values()) {
-            if (gameUser.getAddress().getCity().equals(dataCenter.getCity())) {
+        Map<Address, String> addressToDatacenterName = game.getDataCenters()
+                                                           .stream()
+                                                           .flatMap(dc -> dc.getRegions()
+                                                                            .stream()
+                                                                            .flatMap(region1 -> region1.getCitySet()
+                                                                                                       .stream()
+                                                                                                       .flatMap(
+                                                                                                               city1 -> city1.getAddresses()
+                                                                                                                             .stream()
+                                                                                                                             .map(address -> new Pair<>(
+                                                                                                                                     address,
+                                                                                                                                     dc.getDatacenterName())))))
+                                                           .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
 
-                return String.format("User %s play in datacenter %s",
-                                     gameUser.getName(),
-                                     game.getDataCentres().get(dataCenter.getDatacenterName()).getDatacenterName());
+        for (Address a : addressToDatacenterName.keySet()) {
+            if (gameUser.getAddress().equals(a)) {
             }
+            return String.format("User %s play in datacenter %s",
+                                 gameUser.getName(),
+                                 addressToDatacenterName.get(a));
         }
         return "User don't play game";
     }
 
-    private City cityToContains(City city) {
-        if (cities.contains(city)) {
-            return city;
-        } else {
-            cities.add(city);
-            return city;
-        }
+    @Value
+    public static class Pair<K, V> {
+        private K key;
+        private V value;
     }
 }

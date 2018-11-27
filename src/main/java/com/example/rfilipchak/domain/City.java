@@ -1,10 +1,14 @@
 package com.example.rfilipchak.domain;
 
-import lombok.AllArgsConstructor;
+import lombok.Value;
 
-@AllArgsConstructor
+import java.util.Set;
+
+@Value
 public class City {
-    private Region region;
-
     private String cityName;
+    private Set<Address> addresses;
+
+
 }
+

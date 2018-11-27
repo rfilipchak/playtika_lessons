@@ -1,20 +1,10 @@
 package com.example.rfilipchak.domain;
 
-import lombok.Data;
+import lombok.Value;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Set;
 
-@Data
+@Value
 public class Game {
-
-    private Map<String, DataCenter> gamesDataCentres = new HashMap<>();
-
-    public void addDataCenter(DataCenter dataCenter) {
-        gamesDataCentres.put(dataCenter.getDatacenterName(), dataCenter);
-    }
-
-    public Map<String, DataCenter> getDataCentres() {
-        return gamesDataCentres;
-    }
+    private Set<DataCenter> dataCenters;
 }
