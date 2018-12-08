@@ -1,69 +1,66 @@
 package com.example.rfilipchak.gameservice;
 
-import com.example.rfilipchak.domain.*;
+import com.example.rfilipchak.datacenterservice.DataCenterService;
+import com.example.rfilipchak.datacenterservice.DataCenterServiceImpl;
+import com.example.rfilipchak.domain.Address;
+import com.example.rfilipchak.domain.GameUser;
+import com.example.rfilipchak.regionservice.RegionService;
+import com.example.rfilipchak.regionservice.RegionServiceImpl;
+import com.example.rfilipchak.testcommon.TestCommon;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.HashSet;
-
 import static org.junit.Assert.assertEquals;
 
-public class GameServiceImplTest {
+public class GameServiceImplTest extends TestCommon {
 
     private GameService gameService;
 
-    private Address vatutina = new Address("vatutina,1");
-    private Address gagarina = new Address("gagarina,16");
-
-    private Region vinnickiy = new Region("Vinnickiy", new HashSet<>());
-    private Region kievskiy = new Region("Kievskiy", new HashSet<>());
-
-    private City kiev = new City("Kiev", new HashSet<>());
-    private City vinnica = new City("Vinnica", new HashSet<>());
-
-
-    private DataCenter dataCenter1 = new DataCenter("dataCentre1", new HashSet<>());
-    private DataCenter dataCenter2 = new DataCenter("dataCentre2", new HashSet<>());
-
-    Game slots = new Game(new HashSet<>());
-
     @Before
     public void init() {
-        gameService = new GameServiceImpl();
+        RegionService regionService = new RegionServiceImpl();
+        DataCenterService dataCenterService = new DataCenterServiceImpl();
+        gameService = new GameServiceImpl(dataCenterService, regionService);
+        gameModelSetUp();
     }
 
     @Test
-    public void getUserDataCentre() {
-        kiev.getAddresses().add(vatutina);
-        kiev.getAddresses().add(gagarina);
+    public void shouldCreateNewUser(){
+        GameUser expected = new GameUser("Roman", new Address("vatutina,1", "Kiev"));
 
-        kievskiy.getCitySet().add(kiev);
-        vinnickiy.getCitySet().add(vinnica);
+        GameUser result = gameService.addNewUser("Roman", getVatutina());
 
-        dataCenter1.getRegions().add(kievskiy);
-        dataCenter2.getRegions().add(vinnickiy);
+        assertEquals(expected, result);
+    }
 
-        slots.getDataCenters().add(dataCenter1);
-        slots.getDataCenters().add(dataCenter2);
+    @Test(expected = NullPointerException.class)
+    public void shouldThrowNullPointerForNullUserName(){
+        gameService.addNewUser(null, getVatutina());
+    }
 
-        String expected = "User Roman play in datacenter dataCentre1";
-
-        GameUser roman = gameService.addNewUser("Roman", vatutina);
-
-        String result = gameService.getUserDataCentre(roman, slots);
-
-        assertEquals(result, expected);
+    @Test(expected = NullPointerException.class)
+    public void shouldThrowNullPointerNullAddress(){
+        gameService.addNewUser("Roman", null);
     }
 
     @Test
-    public void shouldDoNotFindDataCenter() {
-        slots.getDataCenters().add(dataCenter1);
-        slots.getDataCenters().add(dataCenter2);
+    public void shouldGetUserDataCenterName() {
+        GameUser roman = gameService.addNewUser("Roman", getVatutina());
+        GameUser oleg = gameService.addNewUser("Oleg", getKievskaya());
 
-        GameUser roman = gameService.addNewUser("Roman", vatutina);
+        String expected = "User Roman play in datacenter: dataCenter1";
 
-        String result = gameService.getUserDataCentre(roman, slots);
+        String result = gameService.getUserDataCenter(roman, getSlots());
 
-        assertEquals(result, "User don't play game");
+        assertEquals(expected, result);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldTrowAnExceptionForNotExistingAddress() {
+        GameUser roman = gameService.addNewUser("Roman", getNotExistingAddress());
+
+        String result = gameService.getUserDataCenter(roman, getSlots());
+
+        assertEquals("User don't play game", result);
     }
 }

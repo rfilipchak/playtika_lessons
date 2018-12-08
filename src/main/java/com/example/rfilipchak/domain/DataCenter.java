@@ -6,6 +6,6 @@ import java.util.Set;
 
 @Value
 public class DataCenter {
-    private String datacenterName;
+    private String dataCenterName;
     private Set<Region> regions;
 }

@@ -1,16 +1,11 @@
 package com.example.rfilipchak.gameservice;
 
 import com.example.rfilipchak.domain.Address;
-import com.example.rfilipchak.domain.City;
 import com.example.rfilipchak.domain.Game;
 import com.example.rfilipchak.domain.GameUser;
-
-import java.util.Set;
 
 public interface GameService {
     GameUser addNewUser(String userName, Address address);
 
-    String getUserDataCentre(GameUser gameUser, Game game);
-
-
+    String getUserDataCenter(GameUser gameUser, Game game);
 }

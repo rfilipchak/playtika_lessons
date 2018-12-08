@@ -8,7 +8,5 @@ import java.util.Set;
 public class City {
     private String cityName;
     private Set<Address> addresses;
-
-
 }
 
